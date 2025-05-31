@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desletra</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #121213;
+      color: #ffffff;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 60px);
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      border: 2px solid #444;
+      font-size: 2rem;
+      line-height: 60px;
+      text-transform: uppercase;
+      font-weight: bold;
+      background-color: #121213;
+      color: white;
+    }
+    .cell.correct {
+      background-color: #538d4e;
+    }
+    .cell.present {
+      background-color: #b59f3b;
+    }
+    .cell.absent {
+      background-color: #3a3a3c;
+    }
+    input {
+      font-size: 1.2rem;
+      padding: 10px;
+      width: 150px;
+      text-transform: uppercase;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+  </style>
+
+<!-- AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3697443799318787"
+     crossorigin="anonymous"></script>
+
+</head>
+<body>
+  <h1>Desletra</h1>
+  <p>Adivinhe a palavra de 5 letras!</p>
+  <div id="game"></div>
+  <input type="text" id="guess" maxlength="5">
+  <button onclick="submitGuess()">Enviar</button>
+  <p id="message"></p>
+
+  <script>
+    const words = ["carro", "piano", "luzia", "vento", "chave", "pedra", "ganho", "linha", "moral", "pazem"];
+    const today = new Date().toISOString().split('T')[0];
+    let index = new Date().getDate() % words.length;
+    const secret = words[index];
+
+    let attempts = 0;
+    const maxAttempts = 6;
+    const game = document.getElementById("game");
+
+    for (let i = 0; i < maxAttempts; i++) {
+      const row = document.createElement("div");
+      row.className = "grid";
+      for (let j = 0; j < 5; j++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.id = `cell-${i}-${j}`;
+        row.appendChild(cell);
+      }
+      game.appendChild(row);
+    }
+
+    function submitGuess() {
+      const guess = document.getElementById("guess").value.toLowerCase();
+      if (guess.length !== 5) {
+        document.getElementById("message").textContent = "Digite uma palavra com 5 letras.";
+        return;
+      }
+
+      for (let i = 0; i < 5; i++) {
+        const cell = document.getElementById(`cell-${attempts}-${i}`);
+        cell.textContent = guess[i];
+        if (guess[i] === secret[i]) {
+          cell.classList.add("correct");
+        } else if (secret.includes(guess[i])) {
+          cell.classList.add("present");
+        } else {
+          cell.classList.add("absent");
+        }
+      }
+
+      attempts++;
+      document.getElementById("guess").value = "";
+
+      if (guess === secret) {
+        document.getElementById("message").textContent = "🎉 Você acertou a palavra!";
+        document.getElementById("guess").disabled = true;
+      } else if (attempts >= maxAttempts) {
+        document.getElementById("message").textContent = `💀 Fim de jogo! A palavra era: ${secret}`;
+        document.getElementById("guess").disabled = true;
+      }
+    }
+  </script>
+</body>
+</html>
